@@ -1,14 +1,65 @@
 # country_selector
 
-A new Flutter package.
+flutter组件-城市选择器
 
-## Getting Started
+## 使用方法
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
+```dart
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Country Selector Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      supportedLocales: [
+        Locale('zh', 'CN'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: [
+        ArisCountryLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      home: MyHomePage(title: 'Country Selector Demo'),
+    );
+  }
+}
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+          child: ArisCountrySelector(
+            listPageTitle: '选择国家和地区',
+            listPageCancelButtonText: '取消',
+            listPageSearchHint: '搜索',
+            onSelected: (params) {
+              print(params.toString());
+            },
+            // initialSelection: '中国',
+            favorite: ['CN', '香港', '台湾', '澳门'],
+          ),
+        ));
+  }
+}
+```
+
+
