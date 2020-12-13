@@ -1,0 +1,27 @@
+name: country_selector
+description: A new Flutter package.
+version: 1.0.0
+homepage: https://github.com/arisorgcn/country_selector
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # chinese pinyin tools
+  # 拼音转换工具 (https://github.com/flutterchina/lpinyin)
+  lpinyin: ^1.1.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter.
+flutter:
+  assets:
+    - packages/country_selector/i18n/en.json
+    - packages/country_selector/i18n/es.json
+    - packages/country_selector/i18n/ko.json
+    - packages/country_selector/i18n/zh.json
