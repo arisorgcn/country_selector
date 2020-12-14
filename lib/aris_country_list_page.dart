@@ -53,6 +53,12 @@ class ArisCountryListPage extends StatefulWidget {
   /// style of search hint text
   final TextStyle hintStyle;
 
+  /// appbar theme of list page
+  final AppBarTheme appBarTheme;
+
+  /// text theme of list page
+  final TextTheme textTheme;
+
   ArisCountryListPage(
     this.navTitle,
     this.cancelButtonText,
@@ -64,6 +70,8 @@ class ArisCountryListPage extends StatefulWidget {
     this.searchStyle,
     this.hintStyle,
     this.searchHint = '',
+    this.appBarTheme,
+    this.textTheme,
   }) : super(key: key);
 
   @override
@@ -85,22 +93,26 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   /// this is useful for filtering purpose
   List<ArisCountryCodeItem> filteredElements;
 
+  /// index bar controller
+  ScrollController indexScrollerController;
+
   /// relative with search text field
-  final FocusNode _textFieldFocusNode = FocusNode();
-  final TextEditingController _textEditingController = TextEditingController();
+  FocusNode _textFieldFocusNode;
+  TextEditingController _textEditingController;
   bool showSearch = false;
 
   /// get country code of initial selected item
   get countryCode => widget.initialSelectedItem.code;
-
-  /// scroll controller for list view
-  final ScrollController indexScrollController = ScrollController();
 
   bool disableIndexBar = false;
 
   @override
   void initState() {
     super.initState();
+    indexScrollerController = ScrollController();
+    _textFieldFocusNode = FocusNode();
+    _textEditingController = TextEditingController();
+
     handledElements = _initItemsList();
     handledFavoriteElements = _initFavoriteItemsList();
     _filterElements('');
@@ -114,7 +126,20 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   @override
   void didUpdateWidget(covariant ArisCountryListPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _filterElements('');
+    if (!showSearch || !disableIndexBar) {
+      indexScrollerController = ScrollController();
+      _textFieldFocusNode = FocusNode();
+      _textEditingController = TextEditingController();
+      _filterElements('');
+    }
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    _textFieldFocusNode.dispose();
+    indexScrollerController.dispose();
+    super.dispose();
   }
 
   @override
@@ -122,7 +147,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return Scaffold(
       appBar: _buildAppBar,
       body: _buildBody,
-      backgroundColor: Color(0xFFDDDDDD),
+      backgroundColor: widget.appBarTheme?.color ?? Color(0xFFDDDDDD),
     );
   }
 
@@ -145,7 +170,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return Stack(
       alignment: Alignment.centerRight,
       children: [
-        CountryList(filteredElements, _selectItem, indexScrollController),
+        CountryList(filteredElements, _selectItem, indexScrollerController),
         Flex(
           direction: Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +180,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
               flex: 1,
               fit: FlexFit.tight,
               child: CountryIndexBar(
-                indexScrollController,
+                indexScrollerController,
                 filteredElements,
                 countryCode,
                 alphaList,
@@ -175,7 +200,10 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       automaticallyImplyLeading: false,
       title: _buildNavTitle,
       titleSpacing: 0.0,
-      backgroundColor: Color(0xFFDDDDDD),
+      textTheme: widget.appBarTheme.textTheme,
+      iconTheme: widget.appBarTheme.iconTheme,
+      actionsIconTheme: widget.appBarTheme.actionsIconTheme,
+      backgroundColor: widget.appBarTheme?.color ?? Color(0xFFDDDDDD),
     );
   }
 
@@ -218,7 +246,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
             setState(() {
               showSearch = true;
               disableIndexBar = true;
-              indexScrollController.jumpTo(0.0);
+              indexScrollerController.jumpTo(0.0);
             });
           },
           child: Icon(Icons.search_outlined, size: 24, color: Colors.black87),
@@ -262,12 +290,12 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
         child: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty)
             ? Icon(
                 Icons.rotate_left_outlined,
-                size: 24,
-                color: Colors.black87,
+                size: widget.appBarTheme.actionsIconTheme?.size ?? 24,
+                color: widget.appBarTheme.actionsIconTheme?.color ?? Colors.black87,
               )
             : Text(
                 widget.cancelButtonText,
-                style: TextStyle(
+                style: widget.appBarTheme?.textTheme?.button?? TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
                 ),
@@ -284,28 +312,32 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),
-        decoration: BoxDecoration(
-          color: Color(0xFFFFFFFF),
-          shape: BoxShape.rectangle,
-          border: Border.all(style: BorderStyle.none),
-          borderRadius: BorderRadius.circular(6.0),
-        ),
+        decoration: (widget.appBarTheme.color?.value >= 0)
+            ? BoxDecoration(
+                color: Color(0xFFF2F2F2),
+                shape: BoxShape.rectangle,
+                border: Border.all(style: BorderStyle.none),
+                borderRadius: BorderRadius.circular(6.0),
+              )
+            : BoxDecoration(
+                color: Color(0xFFFFFFFF),
+                shape: BoxShape.rectangle,
+                border: Border.all(style: BorderStyle.none),
+                borderRadius: BorderRadius.circular(6.0),
+              ),
         child: TextField(
           focusNode: _textFieldFocusNode,
           autofocus: true,
           controller: _textEditingController,
-          style: widget.searchStyle ??
-              TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+          style: widget.appBarTheme.textTheme.bodyText1 ?? TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
           decoration: InputDecoration(
             hintText: widget.searchHint,
-            hintStyle: widget.hintStyle,
+            hintStyle: widget.hintStyle?? widget.appBarTheme.textTheme.bodyText2,
             prefixIcon: Icon(
               Icons.search,
-              color: Colors.grey,
-              size: 20,
             ),
             suffixIcon: _textEditingController.text.isNotEmpty
                 ? InkWell(
@@ -313,15 +345,11 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
                       _textEditingController.clear();
                       _filterElements('');
                     },
-                    child: Icon(
-                      Icons.cancel_sharp,
-                      color: Colors.grey,
-                      size: 18,
-                    ),
+                    child: Icon(Icons.cancel_sharp),
                   )
                 : null,
             contentPadding: const EdgeInsets.only(right: 12.0),
-            focusColor: Color(0xFFF2F2F2),
+            // focusColor: Color(0xFFF2F2F2),
             border: OutlineInputBorder(borderSide: BorderSide.none),
           ),
 
@@ -364,7 +392,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
           name: alpha,
           namePinyin: alpha,
         ));
-        _handledItems.addAll(items.where((e) => e.name.characters.first.toUpperCase() == alpha));
+        _handledItems.addAll(items.where((e) => e.code.characters.first.toUpperCase() == alpha));
       });
     }
 

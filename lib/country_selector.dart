@@ -40,6 +40,12 @@ class ArisCountrySelector extends StatefulWidget {
   /// the hint text of search
   final String listPageSearchHint;
 
+  /// appbar theme of list page
+  final AppBarTheme listPageAppBarTheme;
+
+  /// text theme of list page
+  final TextTheme listPageTextTheme;
+
   /// the text style
   final TextStyle textStyle;
 
@@ -64,6 +70,12 @@ class ArisCountrySelector extends StatefulWidget {
   /// 选中的地区
   final Locale locale;
 
+  /// 是否同时显示国家与地区代码
+  final bool showCountryAndCode;
+
+  /// 是否只显示国家
+  final bool showCountryOnly;
+
   ArisCountrySelector({
     Key key,
     @required this.listPageTitle,
@@ -77,6 +89,33 @@ class ArisCountrySelector extends StatefulWidget {
     this.initialSelection,
     this.favorite = const [],
     this.locale,
+    this.showCountryAndCode = true,
+    this.showCountryOnly = false,
+    this.listPageAppBarTheme = const AppBarTheme(
+        brightness: Brightness.light,
+        color: Color(0xFFFFFFFF),
+        iconTheme: IconThemeData(color: Colors.black87, size: 16),
+        actionsIconTheme: IconThemeData(color: Colors.black87, size: 24),
+        textTheme: TextTheme(
+          headline5: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.normal),
+          headline6: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
+          subtitle1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+          subtitle2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+          bodyText1: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+          bodyText2: TextStyle(color: Colors.black12, fontSize: 14, fontWeight: FontWeight.normal),
+          caption: TextStyle(color: Colors.black12, fontSize: 12, fontWeight: FontWeight.normal),
+          button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),
+        )),
+    this.listPageTextTheme = const TextTheme(
+      headline5: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.normal),
+      headline6: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
+      subtitle1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+      subtitle2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+      bodyText1: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+      bodyText2: TextStyle(color: Colors.black12, fontSize: 14, fontWeight: FontWeight.normal),
+      caption: TextStyle(color: Colors.black12, fontSize: 12, fontWeight: FontWeight.normal),
+      button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),
+    ),
   }) : super(key: key);
 
   @override
@@ -126,7 +165,7 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
             widget.favorite.firstWhere(
                 (f) =>
                     e.code.toUpperCase() == f.toUpperCase() ||
-                    e.dialCode == f ||
+                    e.dialCode.contains(f.toUpperCase()) ||
                     e.name.toUpperCase().contains(RegExp(f.toUpperCase())),
                 orElse: () => null) !=
             null)
@@ -181,7 +220,9 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  selectedItem.toString(),
+                  widget.showCountryAndCode
+                      ? selectedItem.toLongString()
+                      : (widget.showCountryOnly ? selectedItem.toCountryStringOnly() : selectedItem.toString()),
                   style: widget.textStyle ?? Theme.of(context).textTheme.button,
                   overflow: widget.textOverflow,
                 ),
@@ -228,6 +269,8 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
                     elements,
                     favoriteElements,
                     searchHint: widget.listPageSearchHint,
+                    appBarTheme: widget.listPageAppBarTheme,
+                    textTheme: widget.listPageTextTheme,
                   ))).then((e) => _updateSelectedItem(e));
     } else {
       Navigator.push(
@@ -240,6 +283,8 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
                     elements,
                     favoriteElements,
                     searchHint: widget.listPageSearchHint,
+                    appBarTheme: widget.listPageAppBarTheme,
+                    textTheme: widget.listPageTextTheme,
                   ))).then((e) => _updateSelectedItem(e));
     }
   }

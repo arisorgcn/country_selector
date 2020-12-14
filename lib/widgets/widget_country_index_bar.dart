@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Copyright www.aris.org.cn JamesTaylor
 //
@@ -32,6 +33,7 @@ class CountryIndexBar extends StatefulWidget {
 
   final String countryCode;
 
+  /// whether or not index bar should be disabled
   final bool indexBarDisabled;
 
   CountryIndexBar(

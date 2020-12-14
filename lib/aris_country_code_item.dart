@@ -86,11 +86,14 @@ class ArisCountryCodeItem {
     return this..name = ArisCountryLocalizations.of(context)?.translate(this.code) ?? this.name;
   }
 
+  /// to dialCode string only
   @override
   String toString() => "$dialCode";
 
-  String toLongString() => "$dialCode ${toCountryStringOnly()}";
+  /// to long string
+  String toLongString() => "${toCountryStringOnly()} ($dialCode)";
 
+  /// to country string only
   String toCountryStringOnly() {
     return '$name';
   }

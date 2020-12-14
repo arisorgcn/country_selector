@@ -15,13 +15,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 import 'package:flutter/material.dart';
 
-///
-/// @author Aris Hu created at 2020-12-10
-///
-
 /// 默认使用语言
 final Locale defaultLocale = Locale('en', 'US');
 
+/// 中国区域对象
 final Locale localeChina = Locale('zh', 'CN');
 
 /// 支持的语言
@@ -32,6 +29,7 @@ Map<String, Locale> supportedLanguageLocaleMap = {
   'ko': Locale('ko')
 };
 
+/// 所有国家地区代码
 List<Map<String, String>> codes = [
   {
     "name": "افغانستان",

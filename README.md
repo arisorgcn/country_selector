@@ -2,10 +2,24 @@
 
 A flutter package for country and code selection
 
-# Guide
+You can use this widget to get region code and this widget allows you to filter
+the country code items by app bar search bar or the right side index bar.
+Currently, this package only support language as flollows:
+    Locale('zh', 'CN'),     // Chinese Simplified
+    Locale('en'),           // English
+    Locale('es'),           // Spain
+    Locale('ko'),           // Korea
 
-## Step1
-    add **supportedLocales** and **localizationsDelegates**
+## Preview
+
+![preview](/assets/images/country_selector_1.jpg)
+
+
+## Guide
+
+### Step1
+
+add **supportedLocales** and **ArisCountryLocalizations.delegate** to localizationsDelegates config
 
 ```dart
     class MyApp extends StatelessWidget {
@@ -33,7 +47,7 @@ A flutter package for country and code selection
     }
 ```
 
-## Step 2 Use the widget
+### Step 2 Use the widget
 
 ```dart
 
@@ -56,14 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: ArisCountrySelector(
-            listPageTitle: '选择国家和地区',
-            listPageCancelButtonText: '取消',
-            listPageSearchHint: '搜索',
+            listPageTitle: 'Country/Region',
+            listPageCancelButtonText: 'Cancel',
+            listPageSearchHint: 'Search',
             onSelected: (params) {
               print(params.toString());
             },
             // initialSelection: '中国',
-            favorite: ['CN', '香港', '台湾', '澳门'],
+            favorite: ['China', 'HongKong', 'Taiwan', 'MapCao'],
           ),
         ));
   }

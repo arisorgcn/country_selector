@@ -1,4 +1,5 @@
 import 'package:country_selector/aris_country_localizations.dart';
+import 'package:country_selector/constants/country_codes.dart';
 import 'package:country_selector/country_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         Locale('zh', 'CN'),
         Locale('en', 'US'),
       ],
+      locale: defaultLocale,
       localizationsDelegates: [
         ArisCountryLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

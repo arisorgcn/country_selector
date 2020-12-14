@@ -41,12 +41,7 @@ class CountryList extends StatefulWidget {
 class _CountryListState extends State<CountryList> {
   @override
   void didUpdateWidget(covariant CountryList oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.filteredElements.length != widget.filteredElements.length) {
-      // 如果过滤后的列表项数据发生更改
-      widget.indexScrollController.jumpTo(0.0);
-    }
+    return super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -84,7 +79,7 @@ class _CountryListState extends State<CountryList> {
             mainAxisSize: MainAxisSize.min,
             children: [
               currentItem.tagName == 'favorite'
-                  ? Icon(Icons.star_outline, size: 14)
+                  ? Icon(Icons.star_outline, size: 14, color: Colors.black87)
                   : Text(currentItem.tagName,
                       style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 14)),
             ],
