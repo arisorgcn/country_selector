@@ -1,6 +1,7 @@
 name: country_selector
 description: This is a flutter widget, You can use this widget to get region code and this widget allows you to filter
-  the country code items by app bar search or the right side index bar
+  the country code items by app bar search or the right side index bar. You can customize the widget button style
+  using relative config properties, by the way, you need to add flutter localization future when used in your project.
 version: 1.0.2
 homepage: https://github.com/arisorgcn/country_selector
 
