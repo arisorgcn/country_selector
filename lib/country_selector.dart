@@ -46,7 +46,7 @@ class ArisCountrySelector extends StatefulWidget {
   /// text theme of list page
   final TextTheme listPageTextTheme;
 
-  /// the text style
+  /// the button text style
   final TextStyle textStyle;
 
   /// the text style when text overflows
@@ -93,7 +93,7 @@ class ArisCountrySelector extends StatefulWidget {
     this.showCountryOnly = false,
     this.listPageAppBarTheme = const AppBarTheme(
         brightness: Brightness.light,
-        color: Color(0xFFFFFFFF),
+        color: Colors.white,
         iconTheme: IconThemeData(color: Colors.black87, size: 16),
         actionsIconTheme: IconThemeData(color: Colors.black87, size: 24),
         textTheme: TextTheme(
@@ -210,6 +210,7 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
     _widget = FlatButton(
       onPressed: _jumpToListPage,
       highlightColor: Colors.transparent,
+      padding: widget.padding,
       child: Flex(
         direction: Axis.horizontal,
         mainAxisSize: MainAxisSize.min,
@@ -226,7 +227,7 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
                   style: widget.textStyle ?? Theme.of(context).textTheme.button,
                   overflow: widget.textOverflow,
                 ),
-                Icon(Icons.arrow_drop_down),
+                // Icon(Icons.arrow_drop_down),
               ],
             ),
           )

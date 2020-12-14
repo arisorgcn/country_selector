@@ -18,6 +18,7 @@ import 'package:country_selector/widgets/widget_country_index_bar.dart';
 import 'package:country_selector/widgets/widget_country_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import 'aris_country_code_item.dart';
@@ -294,11 +295,12 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
                 color: widget.appBarTheme.actionsIconTheme?.color ?? Colors.black87,
               )
             : Text(
-                widget.cancelButtonText,
-                style: widget.appBarTheme?.textTheme?.button?? TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                ),
+          widget.cancelButtonText,
+                style: widget.appBarTheme?.textTheme?.button ??
+                    TextStyle(
+                      color: Colors.black87,
+                      fontSize: 16,
+                    ),
               ),
       ),
     );
@@ -312,40 +314,41 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),
-        decoration: (widget.appBarTheme.color?.value >= 0)
+        decoration: widget.appBarTheme != null && widget.appBarTheme.color == Colors.white
             ? BoxDecoration(
-                color: Color(0xFFF2F2F2),
-                shape: BoxShape.rectangle,
-                border: Border.all(style: BorderStyle.none),
-                borderRadius: BorderRadius.circular(6.0),
-              )
+          color: Color(0xFFF2F2F2),
+          shape: BoxShape.rectangle,
+          border: Border.all(style: BorderStyle.none),
+          borderRadius: BorderRadius.circular(6.0),
+        )
             : BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                shape: BoxShape.rectangle,
-                border: Border.all(style: BorderStyle.none),
+          color: Color(0xFFFFFFFF),
+          shape: BoxShape.rectangle,
+          border: Border.all(style: BorderStyle.none),
                 borderRadius: BorderRadius.circular(6.0),
               ),
         child: TextField(
           focusNode: _textFieldFocusNode,
           autofocus: true,
           controller: _textEditingController,
-          style: widget.appBarTheme.textTheme.bodyText1 ?? TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
+          style: widget.appBarTheme.textTheme.bodyText1 ??
+              TextStyle(
+                fontSize: 16,
+                color: Colors.black87,
+              ),
           decoration: InputDecoration(
             hintText: widget.searchHint,
-            hintStyle: widget.hintStyle?? widget.appBarTheme.textTheme.bodyText2,
+            hintStyle: widget.hintStyle ?? widget.appBarTheme.textTheme.bodyText2,
             prefixIcon: Icon(
               Icons.search,
             ),
             suffixIcon: _textEditingController.text.isNotEmpty
                 ? InkWell(
-                    onTap: () {
-                      _textEditingController.clear();
-                      _filterElements('');
-                    },
-                    child: Icon(Icons.cancel_sharp),
+              onTap: () {
+                _textEditingController.clear();
+                _filterElements('');
+              },
+              child: Icon(Icons.cancel_sharp),
                   )
                 : null,
             contentPadding: const EdgeInsets.only(right: 12.0),

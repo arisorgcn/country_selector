@@ -3,17 +3,20 @@
 A flutter package for country and code selection
 
 You can use this widget to get region code and this widget allows you to filter
-the country code items by app bar search bar or the right side index bar.
-Currently, this package only support language as flollows:
+the country code items by app bar search or the right side index bar.
+Currently, this package only support language as follows:
+
     Locale('zh', 'CN'),     // Chinese Simplified
+    
     Locale('en'),           // English
+    
     Locale('es'),           // Spain
+    
     Locale('ko'),           // Korea
 
 ## Preview
 
-![preview](/assets/images/country_selector_1.gif)
-
+![preview](https://github.com/arisorgcn/country_selector/blob/main/assets/images/country_selector_1.gif)
 
 ## Guide
 
