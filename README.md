@@ -12,7 +12,7 @@ Currently, this package only support language as flollows:
 
 ## Preview
 
-![preview](/assets/images/country_selector_1.jpg)
+![preview](/assets/images/country_selector_1.gif)
 
 
 ## Guide
