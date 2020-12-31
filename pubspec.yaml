@@ -1,8 +1,7 @@
 name: country_selector
-description: This is a flutter widget, You can use this widget to get region code and this widget allows you to filter
-  the country code items by app bar search or the right side index bar. You can customize the widget button style
-  using relative config properties, by the way, you need to add flutter localization future when used in your project.
-version: 1.0.2
+description: A flutter widget, You can use it to get region code and this widget allows you to filter
+  the country code items by app bar search or the right side index bar.
+version: 1.0.2+1
 homepage: https://github.com/arisorgcn/country_selector
 
 environment:
@@ -16,6 +15,9 @@ dependencies:
   # chinese pinyin tools
   # 拼音转换工具 (https://github.com/flutterchina/lpinyin)
   lpinyin: ^1.1.0
+
+  # page transition
+  page_transition: ^1.1.7+5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

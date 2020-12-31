@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Copyright www.aris.org.cn JamesTaylor
 //
@@ -91,7 +93,10 @@ class ArisCountryCodeItem {
   String toString() => "$dialCode";
 
   /// to long string
-  String toLongString() => "${toCountryStringOnly()} ($dialCode)";
+  String toLongString() {
+    final String country = this.toCountryStringOnly();
+    return "$country($dialCode)";
+  }
 
   /// to country string only
   String toCountryStringOnly() {

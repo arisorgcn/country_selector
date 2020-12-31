@@ -31,7 +31,10 @@ class CountryList extends StatefulWidget {
 
   final ScrollController indexScrollController;
 
-  CountryList(this.filteredElements, this.onSelected, this.indexScrollController, {Key key, this.emptySearchBuilder})
+  final TextTheme textTheme;
+
+  CountryList(this.filteredElements, this.onSelected, this.indexScrollController,
+      {Key key, this.emptySearchBuilder, this.textTheme})
       : super(key: key);
 
   @override
@@ -79,9 +82,17 @@ class _CountryListState extends State<CountryList> {
             mainAxisSize: MainAxisSize.min,
             children: [
               currentItem.tagName == 'favorite'
-                  ? Icon(Icons.star_outline, size: 14, color: Colors.black87)
+                  ? Icon(
+                      Icons.star_outline,
+                      size: widget.textTheme.button.fontSize ?? 14,
+                      color: widget.textTheme.button.color ?? Colors.black87,
+                    )
                   : Text(currentItem.tagName,
-                      style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 14)),
+                      style: TextStyle(
+                        color: widget.textTheme.subtitle1.color ?? Colors.black87,
+                        fontWeight: widget.textTheme.subtitle1.fontWeight ?? FontWeight.bold,
+                        fontSize: widget.textTheme.subtitle1.fontSize ?? 14,
+                      )),
             ],
           ),
         ),
@@ -105,11 +116,17 @@ class _CountryListState extends State<CountryList> {
             children: [
               Text(
                 currentItem.name,
-                style: TextStyle(color: Color(0xFF000000)),
+                style: TextStyle(
+                  color: widget.textTheme.subtitle1.color ?? Colors.black87,
+                  fontSize: widget.textTheme.subtitle1.fontSize ?? 14,
+                ),
               ),
               Text(
                 currentItem.dialCode,
-                style: TextStyle(color: Color(0xFF888888)),
+                style: TextStyle(
+                  color: widget.textTheme.subtitle2.color ?? Color(0xFF888888),
+                  fontSize: widget.textTheme.subtitle2.fontSize ?? 14,
+                ),
               ),
             ],
           ),

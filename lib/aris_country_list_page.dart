@@ -18,7 +18,6 @@ import 'package:country_selector/widgets/widget_country_index_bar.dart';
 import 'package:country_selector/widgets/widget_country_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:lpinyin/lpinyin.dart';
 
 import 'aris_country_code_item.dart';
@@ -48,6 +47,9 @@ class ArisCountryListPage extends StatefulWidget {
 
   final Size size;
 
+  /// body background color
+  final Color bodyBackgroundColor;
+
   /// style of search
   final TextStyle searchStyle;
 
@@ -68,6 +70,7 @@ class ArisCountryListPage extends StatefulWidget {
     this.favoriteElements, {
     Key key,
     this.size,
+    this.bodyBackgroundColor,
     this.searchStyle,
     this.hintStyle,
     this.searchHint = '',
@@ -148,7 +151,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return Scaffold(
       appBar: _buildAppBar,
       body: _buildBody,
-      backgroundColor: widget.appBarTheme?.color ?? Color(0xFFDDDDDD),
+      backgroundColor: widget.bodyBackgroundColor ?? Color(0xFFDDDDDD),
     );
   }
 
@@ -160,7 +163,10 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
         child: Container(
           clipBehavior: Clip.hardEdge,
           width: widget.size?.width ?? MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(border: Border.symmetric(), borderRadius: BorderRadius.zero),
+          decoration: BoxDecoration(
+            border: Border.symmetric(),
+            borderRadius: BorderRadius.zero,
+          ),
           child: _buildStack,
         ),
       ),
@@ -171,7 +177,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return Stack(
       alignment: Alignment.centerRight,
       children: [
-        CountryList(filteredElements, _selectItem, indexScrollerController),
+        CountryList(filteredElements, _selectItem, indexScrollerController, textTheme: widget.textTheme),
         Flex(
           direction: Axis.vertical,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -187,6 +193,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
                 alphaList,
                 filteredIndexedElementsMap,
                 indexBarDisabled: disableIndexBar,
+                textTheme: widget.textTheme,
               ),
             ),
           ],
@@ -223,7 +230,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
             child: Icon(
               Icons.arrow_back_ios_outlined,
               size: 22.0,
-              color: Colors.black87,
+              color: widget.appBarTheme.iconTheme?.color ?? Colors.black87,
             ),
             onPressed: () => _selectItem(null),
           )
@@ -237,10 +244,13 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       children: [
         Text(
           widget.navTitle,
-          style: TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-          ),
+          style: widget.appBarTheme.textTheme.headline5?.copyWith(
+                fontSize: 22,
+              ) ??
+              TextStyle(
+                fontSize: 22,
+                color: Colors.black87,
+              ),
         ),
         FlatButton(
           onPressed: () {
@@ -250,7 +260,11 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
               indexScrollerController.jumpTo(0.0);
             });
           },
-          child: Icon(Icons.search_outlined, size: 24, color: Colors.black87),
+          child: Icon(
+            Icons.search_outlined,
+            size: widget.appBarTheme.iconTheme?.size ?? 24,
+            color: widget.appBarTheme.textTheme.button?.color ?? Colors.black87,
+          ),
         ),
       ],
     );
@@ -260,7 +274,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return GestureDetector(
       onTap: _hideKeyboard,
       child: SizedBox(
-        width: MediaQuery.of(context).size.width,
+        width: double.infinity,
         height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: EdgeInsets.all(8.0),
@@ -291,16 +305,12 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
         child: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty)
             ? Icon(
                 Icons.rotate_left_outlined,
-                size: widget.appBarTheme.actionsIconTheme?.size ?? 24,
-                color: widget.appBarTheme.actionsIconTheme?.color ?? Colors.black87,
+                size: widget.appBarTheme.textTheme.button.fontSize,
+                color: widget.appBarTheme.textTheme.button.color,
               )
             : Text(
-          widget.cancelButtonText,
-                style: widget.appBarTheme?.textTheme?.button ??
-                    TextStyle(
-                      color: Colors.black87,
-                      fontSize: 16,
-                    ),
+                widget.cancelButtonText,
+                style: widget.appBarTheme.textTheme.headline6,
               ),
       ),
     );
@@ -309,22 +319,22 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   ConstrainedBox get _buildConstrainedTextField {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxWidth: 320,
+        maxWidth: MediaQuery.of(context).size.width * 0.85,
         maxHeight: 38,
       ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),
         decoration: widget.appBarTheme != null && widget.appBarTheme.color == Colors.white
             ? BoxDecoration(
-          color: Color(0xFFF2F2F2),
-          shape: BoxShape.rectangle,
-          border: Border.all(style: BorderStyle.none),
-          borderRadius: BorderRadius.circular(6.0),
-        )
+                color: Color(0xFFF2F2F2),
+                shape: BoxShape.rectangle,
+                border: Border.all(style: BorderStyle.none),
+                borderRadius: BorderRadius.circular(6.0),
+              )
             : BoxDecoration(
-          color: Color(0xFFFFFFFF),
-          shape: BoxShape.rectangle,
-          border: Border.all(style: BorderStyle.none),
+                color: Color(0xFFFFFFFF),
+                shape: BoxShape.rectangle,
+                border: Border.all(style: BorderStyle.none),
                 borderRadius: BorderRadius.circular(6.0),
               ),
         child: TextField(
@@ -344,11 +354,11 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
             ),
             suffixIcon: _textEditingController.text.isNotEmpty
                 ? InkWell(
-              onTap: () {
-                _textEditingController.clear();
-                _filterElements('');
-              },
-              child: Icon(Icons.cancel_sharp),
+                    onTap: () {
+                      _textEditingController.clear();
+                      _filterElements('');
+                    },
+                    child: Icon(Icons.cancel_sharp),
                   )
                 : null,
             contentPadding: const EdgeInsets.only(right: 12.0),

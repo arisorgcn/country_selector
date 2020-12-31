@@ -18,11 +18,12 @@ library country_selector;
 
 import 'dart:io';
 
-import 'package:country_selector/aris_country_list_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'aris_country_code_item.dart';
+import 'aris_country_list_page.dart';
 import 'aris_country_params.dart';
 import 'constants/country_codes.dart';
 
@@ -45,6 +46,9 @@ class ArisCountrySelector extends StatefulWidget {
 
   /// text theme of list page
   final TextTheme listPageTextTheme;
+
+  /// theme of list page body
+  final Color listBodyBackground;
 
   /// the button text style
   final TextStyle textStyle;
@@ -91,32 +95,72 @@ class ArisCountrySelector extends StatefulWidget {
     this.locale,
     this.showCountryAndCode = true,
     this.showCountryOnly = false,
-    this.listPageAppBarTheme = const AppBarTheme(
-        brightness: Brightness.light,
-        color: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black87, size: 16),
-        actionsIconTheme: IconThemeData(color: Colors.black87, size: 24),
-        textTheme: TextTheme(
-          headline5: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.normal),
-          headline6: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
-          subtitle1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
-          subtitle2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
-          bodyText1: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
-          bodyText2: TextStyle(color: Colors.black12, fontSize: 14, fontWeight: FontWeight.normal),
-          caption: TextStyle(color: Colors.black12, fontSize: 12, fontWeight: FontWeight.normal),
-          button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),
-        )),
-    this.listPageTextTheme = const TextTheme(
-      headline5: TextStyle(color: Colors.black87, fontSize: 24, fontWeight: FontWeight.normal),
-      headline6: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
-      subtitle1: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
-      subtitle2: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
-      bodyText1: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
-      bodyText2: TextStyle(color: Colors.black12, fontSize: 14, fontWeight: FontWeight.normal),
-      caption: TextStyle(color: Colors.black12, fontSize: 12, fontWeight: FontWeight.normal),
-      button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.normal),
-    ),
-  }) : super(key: key);
+    final AppBarTheme listPageAppBarTheme,
+    final TextTheme listPageTextTheme,
+    this.listBodyBackground = Colors.white,
+  })  : this.listPageAppBarTheme = AppBarTheme(
+          brightness: listPageAppBarTheme.brightness ?? Brightness.dark,
+          color: listPageAppBarTheme.color ?? Colors.blue,
+          iconTheme: listPageAppBarTheme.iconTheme != null
+              ? listPageAppBarTheme.iconTheme.copyWith(
+                  color: listPageAppBarTheme.iconTheme.color ?? Colors.black87,
+                  size: listPageAppBarTheme.iconTheme.size ?? 22,
+                )
+              : IconThemeData(color: Colors.black87, size: 22),
+          actionsIconTheme: listPageAppBarTheme.actionsIconTheme ?? IconThemeData(color: Colors.black87, size: 24),
+          textTheme: listPageAppBarTheme.textTheme != null
+              ? listPageAppBarTheme.textTheme.copyWith(
+                  headline5: listPageAppBarTheme.textTheme.headline5 != null
+                      ? listPageAppBarTheme.textTheme.headline5.copyWith(
+                          color: listPageAppBarTheme.textTheme.headline5.color ?? Colors.black87,
+                          fontSize: listPageAppBarTheme.textTheme.headline5.fontSize ?? 18,
+                          fontWeight: listPageAppBarTheme.textTheme.headline5.fontWeight ?? FontWeight.bold,
+                        )
+                      : TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+                  headline6: listPageAppBarTheme.textTheme.headline6 != null
+                      ? listPageAppBarTheme.textTheme.headline6.copyWith(
+                          color: listPageAppBarTheme.textTheme.headline6.color ?? Colors.black87,
+                          fontSize: listPageAppBarTheme.textTheme.headline6.fontSize ?? 16,
+                          fontWeight: listPageAppBarTheme.textTheme.headline6.fontWeight ?? FontWeight.bold,
+                        )
+                      : TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                  button: listPageAppBarTheme.textTheme.button != null
+                      ? listPageAppBarTheme.textTheme.button.copyWith(
+                          color: listPageAppBarTheme.textTheme.button.color ?? Colors.black87,
+                          fontSize: listPageAppBarTheme.textTheme.button.fontSize ?? 24,
+                          fontWeight: listPageAppBarTheme.textTheme.button.fontWeight ?? FontWeight.bold,
+                        )
+                      : TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+                )
+              : TextTheme(
+                  headline5: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+                  headline6: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                  button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+        ),
+        this.listPageTextTheme = TextTheme(
+          subtitle1: TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          button: TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          subtitle2: TextStyle(
+            color: Color(0xFF888888),
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          caption: TextStyle(
+            color: Colors.black54,
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        super(key: key);
 
   @override
   _ArisCountrySelectorState createState() {
@@ -144,13 +188,17 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
   ArisCountryParams callbackParams = ArisCountryParams();
 
   /// 系统默认地区代码
-  final String sysLocaleCountryCode = Platform.localeName.substring(Platform.localeName.lastIndexOf(RegExp('_')) + 1);
+  String sysLocaleCountryCode;
 
   _ArisCountrySelectorState(this.elements);
 
   @override
   void initState() {
     super.initState();
+    sysLocaleCountryCode =
+        Platform.localeName.substring(Platform.localeName.lastIndexOf(RegExp('_')) + 1).toUpperCase();
+    print("sysLocaleCountryCode: $sysLocaleCountryCode");
+
     // 初始选择
     _initSelectedItem();
 
@@ -165,8 +213,8 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
             widget.favorite.firstWhere(
                 (f) =>
                     e.code.toUpperCase() == f.toUpperCase() ||
-                    e.dialCode.contains(f.toUpperCase()) ||
-                    e.name.toUpperCase().contains(RegExp(f.toUpperCase())),
+                    e.dialCode.substring(1) == f.toUpperCase() ||
+                    e.name.toUpperCase() == f.toUpperCase(),
                 orElse: () => null) !=
             null)
         .toList();
@@ -184,6 +232,10 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
     } else {
       selectedItem = _initSelectedItemByLocale();
     }
+
+    // when initialized, should fire this event to the user
+    // https://github.com/arisorgcn/country_selector/issues/1
+    widget.onSelected(ArisCountryParams(selectedItem: selectedItem));
   }
 
   /// 根据默认locale初始化selectedItem
@@ -201,7 +253,7 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
   }
 
   get _getSelectedItemWithDefaultLocale =>
-      elements.firstWhere((e) => e.code.toUpperCase() == sysLocaleCountryCode, orElse: () => elements[0]);
+      elements.firstWhere((e) => e.code.toUpperCase().startsWith(sysLocaleCountryCode), orElse: () => elements[0]);
 
   @override
   Widget build(BuildContext context) {
@@ -259,35 +311,23 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
   }
 
   _jumpToListPage() {
-    if (Platform.isIOS) {
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) => ArisCountryListPage(
-                    widget.listPageTitle,
-                    widget.listPageCancelButtonText,
-                    selectedItem,
-                    elements,
-                    favoriteElements,
-                    searchHint: widget.listPageSearchHint,
-                    appBarTheme: widget.listPageAppBarTheme,
-                    textTheme: widget.listPageTextTheme,
-                  ))).then((e) => _updateSelectedItem(e));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ArisCountryListPage(
-                    widget.listPageTitle,
-                    widget.listPageCancelButtonText,
-                    selectedItem,
-                    elements,
-                    favoriteElements,
-                    searchHint: widget.listPageSearchHint,
-                    appBarTheme: widget.listPageAppBarTheme,
-                    textTheme: widget.listPageTextTheme,
-                  ))).then((e) => _updateSelectedItem(e));
-    }
+    Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.bottomToTop,
+            child: ArisCountryListPage(
+              widget.listPageTitle,
+              widget.listPageCancelButtonText,
+              selectedItem,
+              elements,
+              favoriteElements,
+              searchHint: widget.listPageSearchHint,
+              bodyBackgroundColor: widget.listBodyBackground,
+              appBarTheme: widget.listPageAppBarTheme,
+              textTheme: widget.listPageTextTheme,
+            ))).then(
+      (e) => _updateSelectedItem(e),
+    );
   }
 
   void _updateSelectedItem(e) {

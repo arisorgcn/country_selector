@@ -52,14 +52,32 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: ArisCountrySelector(
-            listPageTitle: '选择国家和地区',
-            listPageCancelButtonText: '取消',
-            listPageSearchHint: '搜索',
+            listPageTitle: 'Select Country and Region',
+            listPageCancelButtonText: 'Cancel',
+            listPageSearchHint: 'Search',
+            initialSelection: 'US',
+            listPageAppBarTheme: AppBarTheme(
+                color: Colors.blue,
+                iconTheme: IconThemeData(
+                  color: Colors.white,
+                ),
+                textTheme: TextTheme(
+                    headline5: TextStyle(
+                      color: Colors.white,
+                    ),
+                    headline6: TextStyle(
+                      color: Colors.white,
+                    ),
+                    button: TextStyle(
+                      color: Colors.white,
+                    ))),
+            // listPageTextTheme: TextTheme(
+            //
+            // ),
             onSelected: (params) {
               print(params.toString());
             },
-            // initialSelection: '中国',
-            favorite: ['CN', '香港', '台湾', '澳门'],
+            favorite: ['86', 'HK', 'MO', 'TW'],
           ),
         ));
   }

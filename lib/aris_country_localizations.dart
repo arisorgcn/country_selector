@@ -38,7 +38,7 @@ class ArisCountryLocalizations {
   Map<String, String> _localizedStrings;
 
   Future<bool> load() async {
-    print('locale.languageCode: ${locale.toString()}');
+    // print('locale.languageCode: ${locale.toString()}');
     String jsonString = await rootBundle.loadString('packages/country_selector/i18n/${locale.languageCode}.json');
     Map<String, dynamic> jsonMap = jsonDecode(jsonString);
     _localizedStrings = jsonMap.map((key, value) {

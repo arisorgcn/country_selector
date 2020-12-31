@@ -35,6 +35,8 @@ class CountryIndexBar extends StatefulWidget {
   /// whether or not index bar should be disabled
   final bool indexBarDisabled;
 
+  final TextTheme textTheme;
+
   CountryIndexBar(
     this.indexScrollController,
     this.filteredElements,
@@ -42,6 +44,7 @@ class CountryIndexBar extends StatefulWidget {
     this.alphaList,
     this.filteredIndexedElementsMap, {
     this.indexBarDisabled,
+    this.textTheme,
   });
 
   @override
@@ -116,13 +119,19 @@ class _CountryIndexBarState extends State<CountryIndexBar> {
         alphaItems.add(Center(
           child: Icon(
             Icons.star_outline,
-            color: Colors.black87,
-            size: 12,
+            color: widget.textTheme.caption.color ?? Colors.black87,
+            size: widget.textTheme.caption.fontSize ?? 12,
           ),
         ));
       } else {
         alphaItems.add(Center(
-          child: Text(alpha, style: TextStyle(fontSize: 12, color: Colors.black87)),
+          child: Text(
+            alpha,
+            style: TextStyle(
+              color: widget.textTheme.caption.color ?? Colors.black87,
+              fontSize: widget.textTheme.caption.fontSize ?? 12,
+            ),
+          ),
         ));
       }
     });
