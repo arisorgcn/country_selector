@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Copyright www.aris.org.cn JamesTaylor
 //
@@ -43,6 +41,9 @@ class ArisCountryCodeItem {
   /// 国家名称
   String name;
 
+  /// 国家名称英文
+  String countryName;
+
   /// 国家名称拼音首字符
   String namePinyin;
 
@@ -52,16 +53,18 @@ class ArisCountryCodeItem {
   /// 电话区号 (+39,+93..)
   final String dialCode;
 
-  ArisCountryCodeItem(
-      {this.isTag = false,
-      this.tagName,
-      this.langCode,
-      this.scriptCode,
-      this.code,
-      this.name,
-      this.namePinyin,
-      this.nameFirstWordPinyin,
-      this.dialCode}) {
+  ArisCountryCodeItem({
+    this.isTag = false,
+    this.tagName,
+    this.langCode,
+    this.scriptCode,
+    this.code,
+    this.name,
+    this.countryName,
+    this.namePinyin,
+    this.nameFirstWordPinyin,
+    this.dialCode,
+  }) {
     if (this.isTag) {
       assert(tagName != null, 'tagName should not be null when isTag is set');
     }
@@ -80,7 +83,12 @@ class ArisCountryCodeItem {
   }
 
   factory ArisCountryCodeItem.fromJson(Map<String, dynamic> json) {
-    return ArisCountryCodeItem(name: json['name'], code: json['code'], dialCode: json['dialCode']);
+    return ArisCountryCodeItem(
+      name: json['name'],
+      code: json['code'],
+      dialCode: json['dialCode'],
+      countryName: json['countryName'],
+    );
   }
 
   /// get country name for specific locale
@@ -102,4 +110,33 @@ class ArisCountryCodeItem {
   String toCountryStringOnly() {
     return '$name';
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ArisCountryCodeItem &&
+          runtimeType == other.runtimeType &&
+          isTag == other.isTag &&
+          tagName == other.tagName &&
+          langCode == other.langCode &&
+          scriptCode == other.scriptCode &&
+          code == other.code &&
+          name == other.name &&
+          countryName == other.countryName &&
+          namePinyin == other.namePinyin &&
+          nameFirstWordPinyin == other.nameFirstWordPinyin &&
+          dialCode == other.dialCode;
+
+  @override
+  int get hashCode =>
+      isTag.hashCode ^
+      tagName.hashCode ^
+      langCode.hashCode ^
+      scriptCode.hashCode ^
+      code.hashCode ^
+      name.hashCode ^
+      countryName.hashCode ^
+      namePinyin.hashCode ^
+      nameFirstWordPinyin.hashCode ^
+      dialCode.hashCode;
 }

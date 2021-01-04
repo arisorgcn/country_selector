@@ -84,14 +84,14 @@ class _CountryListState extends State<CountryList> {
               currentItem.tagName == 'favorite'
                   ? Icon(
                       Icons.star_outline,
-                      size: widget.textTheme.button.fontSize ?? 14,
-                      color: widget.textTheme.button.color ?? Colors.black87,
+                      size: widget.textTheme.button.fontSize,
+                      color: widget.textTheme.button.color,
                     )
                   : Text(currentItem.tagName,
                       style: TextStyle(
-                        color: widget.textTheme.subtitle1.color ?? Colors.black87,
-                        fontWeight: widget.textTheme.subtitle1.fontWeight ?? FontWeight.bold,
-                        fontSize: widget.textTheme.subtitle1.fontSize ?? 14,
+                        color: widget.textTheme.button.color,
+                        fontWeight: widget.textTheme.button.fontWeight,
+                        fontSize: widget.textTheme.button.fontSize,
                       )),
             ],
           ),
@@ -114,19 +114,30 @@ class _CountryListState extends State<CountryList> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text(
-                currentItem.name,
-                style: TextStyle(
-                  color: widget.textTheme.subtitle1.color ?? Colors.black87,
-                  fontSize: widget.textTheme.subtitle1.fontSize ?? 14,
+              // Country Name
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 280,
+                ),
+                child: Text(
+                  currentItem.name,
+                  softWrap: true,
+                  maxLines: 1,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: widget.textTheme.subtitle1.color,
+                      fontSize: widget.textTheme.subtitle1.fontSize,
+                      fontWeight: widget.textTheme.subtitle1.fontWeight),
                 ),
               ),
+              // Dial Code
               Text(
                 currentItem.dialCode,
                 style: TextStyle(
-                  color: widget.textTheme.subtitle2.color ?? Color(0xFF888888),
-                  fontSize: widget.textTheme.subtitle2.fontSize ?? 14,
-                ),
+                    color: widget.textTheme.subtitle2.color,
+                    fontSize: widget.textTheme.subtitle2.fontSize,
+                    fontWeight: widget.textTheme.subtitle2.fontWeight),
               ),
             ],
           ),

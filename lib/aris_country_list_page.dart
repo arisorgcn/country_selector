@@ -27,6 +27,9 @@ import 'aris_country_code_item.dart';
 /// @author Aris Hu created at 2020-12-12
 ///
 class ArisCountryListPage extends StatefulWidget {
+  /// use center title
+  final bool useCenterTitle;
+
   /// the appbar title
   final String navTitle;
 
@@ -45,8 +48,6 @@ class ArisCountryListPage extends StatefulWidget {
   /// elements passed as favorite
   final List<ArisCountryCodeItem> favoriteElements;
 
-  final Size size;
-
   /// body background color
   final Color bodyBackgroundColor;
 
@@ -62,6 +63,9 @@ class ArisCountryListPage extends StatefulWidget {
   /// text theme of list page
   final TextTheme textTheme;
 
+  /// text theme of index bar
+  final TextTheme indexBarTheme;
+
   ArisCountryListPage(
     this.navTitle,
     this.cancelButtonText,
@@ -69,13 +73,14 @@ class ArisCountryListPage extends StatefulWidget {
     this.elements,
     this.favoriteElements, {
     Key key,
-    this.size,
+    this.useCenterTitle = true,
     this.bodyBackgroundColor,
     this.searchStyle,
     this.hintStyle,
     this.searchHint = '',
     this.appBarTheme,
     this.textTheme,
+    this.indexBarTheme,
   }) : super(key: key);
 
   @override
@@ -123,11 +128,6 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   void didUpdateWidget(covariant ArisCountryListPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!showSearch || !disableIndexBar) {
@@ -151,23 +151,27 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return Scaffold(
       appBar: _buildAppBar,
       body: _buildBody,
-      backgroundColor: widget.bodyBackgroundColor ?? Color(0xFFDDDDDD),
+      backgroundColor: widget.bodyBackgroundColor,
     );
   }
 
   Widget get _buildBody {
-    return GestureDetector(
-      onTap: _hideKeyboard,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          width: widget.size?.width ?? MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            border: Border.symmetric(),
-            borderRadius: BorderRadius.zero,
+    return Scrollbar(
+      thickness: 4.0,
+      radius: Radius.circular(6.0),
+      child: GestureDetector(
+        onTap: _hideKeyboard,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+          child: Container(
+            clipBehavior: Clip.hardEdge,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              border: Border.symmetric(),
+              borderRadius: BorderRadius.zero,
+            ),
+            child: _buildStack,
           ),
-          child: _buildStack,
         ),
       ),
     );
@@ -178,25 +182,20 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       alignment: Alignment.centerRight,
       children: [
         CountryList(filteredElements, _selectItem, indexScrollerController, textTheme: widget.textTheme),
-        Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: CountryIndexBar(
-                indexScrollerController,
-                filteredElements,
-                countryCode,
-                alphaList,
-                filteredIndexedElementsMap,
-                indexBarDisabled: disableIndexBar,
-                textTheme: widget.textTheme,
-              ),
+        Positioned(
+          top: (MediaQuery.of(context).size.height - 660) / 2,
+          right: 0,
+          child: Center(
+            child: CountryIndexBar(
+              indexScrollerController,
+              filteredElements,
+              countryCode,
+              alphaList,
+              filteredIndexedElementsMap,
+              indexBarDisabled: disableIndexBar,
+              indexBarTheme: widget.indexBarTheme,
             ),
-          ],
+          ),
         ),
       ],
     );
@@ -208,10 +207,31 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       automaticallyImplyLeading: false,
       title: _buildNavTitle,
       titleSpacing: 0.0,
+      actions: [
+        showSearch == false
+            ? SizedBox(
+                width: 60,
+                child: FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      showSearch = true;
+                      disableIndexBar = true;
+                      indexScrollerController.jumpTo(0.0);
+                    });
+                  },
+                  child: Icon(
+                    Icons.search_outlined,
+                    size: widget.appBarTheme.iconTheme.size,
+                    color: widget.appBarTheme.textTheme.button.color,
+                  ),
+                ),
+              )
+            : SizedBox.shrink(),
+      ],
       textTheme: widget.appBarTheme.textTheme,
       iconTheme: widget.appBarTheme.iconTheme,
       actionsIconTheme: widget.appBarTheme.actionsIconTheme,
-      backgroundColor: widget.appBarTheme?.color ?? Color(0xFFDDDDDD),
+      backgroundColor: widget.appBarTheme.color,
     );
   }
 
@@ -226,47 +246,36 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   /// 构建标题栏左边按钮部分
   Widget get _buildLeading {
     return !showSearch
-        ? FlatButton(
-            child: Icon(
-              Icons.arrow_back_ios_outlined,
-              size: 22.0,
-              color: widget.appBarTheme.iconTheme?.color ?? Colors.black87,
+        ? SizedBox(
+            width: 40,
+            child: FlatButton(
+              child: Icon(
+                Icons.arrow_back_ios_outlined,
+                size: 22.0,
+                color: widget.appBarTheme.iconTheme.color,
+              ),
+              onPressed: () => _selectItem(null),
             ),
-            onPressed: () => _selectItem(null),
           )
         : null;
   }
 
   Widget _showTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Text(
-          widget.navTitle,
-          style: widget.appBarTheme.textTheme.headline5?.copyWith(
-                fontSize: 22,
-              ) ??
-              TextStyle(
-                fontSize: 22,
-                color: Colors.black87,
-              ),
-        ),
-        FlatButton(
-          onPressed: () {
-            setState(() {
-              showSearch = true;
-              disableIndexBar = true;
-              indexScrollerController.jumpTo(0.0);
-            });
-          },
-          child: Icon(
-            Icons.search_outlined,
-            size: widget.appBarTheme.iconTheme?.size ?? 24,
-            color: widget.appBarTheme.textTheme.button?.color ?? Colors.black87,
+    return Container(
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100),
+      alignment: widget.useCenterTitle ? Alignment.center : Alignment.centerLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            widget.navTitle,
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+            style: widget.appBarTheme.textTheme.headline5,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -274,15 +283,19 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return GestureDetector(
       onTap: _hideKeyboard,
       child: SizedBox(
-        width: double.infinity,
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              _buildConstrainedTextField,
+              Expanded(child: _buildConstrainedTextField),
+              SizedBox(
+                width: 16.0,
+                child: Divider(),
+              ),
               _buildSearchCancelButton,
             ],
           ),
@@ -310,7 +323,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
               )
             : Text(
                 widget.cancelButtonText,
-                style: widget.appBarTheme.textTheme.headline6,
+                style: widget.appBarTheme.textTheme.headline5,
               ),
       ),
     );
@@ -319,7 +332,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   ConstrainedBox get _buildConstrainedTextField {
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.85,
+        maxWidth: MediaQuery.of(context).size.width - 100,
         maxHeight: 38,
       ),
       child: Container(
@@ -405,7 +418,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
           name: alpha,
           namePinyin: alpha,
         ));
-        _handledItems.addAll(items.where((e) => e.code.characters.first.toUpperCase() == alpha));
+        _handledItems.addAll(items.where((e) => e.countryName.characters.first.toUpperCase() == alpha));
       });
     }
 
@@ -422,7 +435,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       if (countryCode == localeChina.countryCode) {
         return e.namePinyin.characters.first.toUpperCase();
       } else {
-        return e.code.characters.first.toUpperCase();
+        return e.countryName.characters.first.toUpperCase();
       }
     }).forEach((e) {
       if (!alphasSet.contains(e)) {
@@ -489,7 +502,10 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
           if (e.isTag) {
             return e.tagName.toUpperCase().contains(s);
           }
-          return e.code.toUpperCase().contains(s) || e.dialCode.contains(s) || e.name.toUpperCase().contains(s);
+          return e.code.toUpperCase().contains(s) ||
+              e.dialCode.contains(s) ||
+              e.name.toUpperCase().contains(s) ||
+              e.countryName.toUpperCase().contains(s);
         }).toList();
       }
     }
@@ -532,7 +548,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
         }
       } else {
         if (!e.isTag) {
-          alpha = e.code.characters.first.toUpperCase();
+          alpha = e.countryName.characters.first.toUpperCase();
           if (!_indexedElementsMap.containsKey(alpha)) {
             _indexedElementsMap.update(alpha, (list) {
               list.add(e);

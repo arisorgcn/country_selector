@@ -35,6 +35,9 @@ class ArisCountrySelector extends StatefulWidget {
   /// the title of the list page
   final String listPageTitle;
 
+  /// use center title
+  final bool titleCentered;
+
   /// the text of cancel page in list page
   final String listPageCancelButtonText;
 
@@ -46,6 +49,9 @@ class ArisCountrySelector extends StatefulWidget {
 
   /// text theme of list page
   final TextTheme listPageTextTheme;
+
+  /// index bar theme
+  final TextTheme listPageIndexBarTheme;
 
   /// theme of list page body
   final Color listBodyBackground;
@@ -85,6 +91,7 @@ class ArisCountrySelector extends StatefulWidget {
     @required this.listPageTitle,
     @required this.listPageCancelButtonText,
     @required this.onSelected,
+    this.titleCentered = true,
     this.listPageSearchHint = '',
     this.alignLeft = true,
     this.textStyle,
@@ -95,8 +102,9 @@ class ArisCountrySelector extends StatefulWidget {
     this.locale,
     this.showCountryAndCode = true,
     this.showCountryOnly = false,
-    final AppBarTheme listPageAppBarTheme,
-    final TextTheme listPageTextTheme,
+    @required final AppBarTheme listPageAppBarTheme,
+    @required final TextTheme listPageTextTheme,
+    @required final TextTheme listPageIndexBarTheme,
     this.listBodyBackground = Colors.white,
   })  : this.listPageAppBarTheme = AppBarTheme(
           brightness: listPageAppBarTheme.brightness ?? Brightness.dark,
@@ -104,61 +112,96 @@ class ArisCountrySelector extends StatefulWidget {
           iconTheme: listPageAppBarTheme.iconTheme != null
               ? listPageAppBarTheme.iconTheme.copyWith(
                   color: listPageAppBarTheme.iconTheme.color ?? Colors.black87,
-                  size: listPageAppBarTheme.iconTheme.size ?? 22,
+                  size: listPageAppBarTheme.iconTheme.size ?? 20,
                 )
-              : IconThemeData(color: Colors.black87, size: 22),
-          actionsIconTheme: listPageAppBarTheme.actionsIconTheme ?? IconThemeData(color: Colors.black87, size: 24),
+              : IconThemeData(color: Colors.black87, size: 20),
+          actionsIconTheme: listPageAppBarTheme.actionsIconTheme ?? IconThemeData(color: Colors.black87, size: 20),
           textTheme: listPageAppBarTheme.textTheme != null
               ? listPageAppBarTheme.textTheme.copyWith(
                   headline5: listPageAppBarTheme.textTheme.headline5 != null
                       ? listPageAppBarTheme.textTheme.headline5.copyWith(
                           color: listPageAppBarTheme.textTheme.headline5.color ?? Colors.black87,
-                          fontSize: listPageAppBarTheme.textTheme.headline5.fontSize ?? 18,
+                          fontSize: listPageAppBarTheme.textTheme.headline5.fontSize ?? 16,
                           fontWeight: listPageAppBarTheme.textTheme.headline5.fontWeight ?? FontWeight.bold,
                         )
-                      : TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
+                      : TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                   headline6: listPageAppBarTheme.textTheme.headline6 != null
                       ? listPageAppBarTheme.textTheme.headline6.copyWith(
                           color: listPageAppBarTheme.textTheme.headline6.color ?? Colors.black87,
-                          fontSize: listPageAppBarTheme.textTheme.headline6.fontSize ?? 16,
+                          fontSize: listPageAppBarTheme.textTheme.headline6.fontSize ?? 14,
                           fontWeight: listPageAppBarTheme.textTheme.headline6.fontWeight ?? FontWeight.bold,
                         )
-                      : TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                      : TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
                   button: listPageAppBarTheme.textTheme.button != null
                       ? listPageAppBarTheme.textTheme.button.copyWith(
                           color: listPageAppBarTheme.textTheme.button.color ?? Colors.black87,
-                          fontSize: listPageAppBarTheme.textTheme.button.fontSize ?? 24,
+                          fontSize: listPageAppBarTheme.textTheme.button.fontSize ?? 14,
                           fontWeight: listPageAppBarTheme.textTheme.button.fontWeight ?? FontWeight.bold,
                         )
                       : TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
                 )
               : TextTheme(
-                  headline5: TextStyle(color: Colors.black87, fontSize: 18, fontWeight: FontWeight.bold),
-                  headline6: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                  headline5: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                  headline6: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
                   button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
                 ),
         ),
         this.listPageTextTheme = TextTheme(
-          subtitle1: TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          // country text style
+          subtitle1: listPageTextTheme.subtitle1 != null
+              ? listPageTextTheme.subtitle1.copyWith(
+                  color: listPageTextTheme.subtitle1.color ?? Colors.black87,
+                  fontSize: listPageTextTheme.subtitle1.fontSize ?? 16,
+                  fontWeight: listPageTextTheme.subtitle1.fontWeight ?? FontWeight.normal,
+                )
+              : TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+          // index tag style
+          button: listPageTextTheme.button != null
+              ? listPageTextTheme.button.copyWith(
+                  color: listPageTextTheme.button.color ?? Colors.black87,
+                  fontSize: listPageTextTheme.button.fontSize ?? 16,
+                  fontWeight: listPageTextTheme.button.fontWeight ?? FontWeight.bold,
+                )
+              : TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+          // right dial code style
+          subtitle2: listPageIndexBarTheme.subtitle2 != null
+              ? listPageIndexBarTheme.subtitle2.copyWith(
+                  color: listPageTextTheme.subtitle2.color ?? Color(0xFF888888),
+                  fontSize: listPageTextTheme.subtitle2.fontSize ?? 12,
+                  fontWeight: listPageTextTheme.subtitle2.fontWeight ?? FontWeight.normal,
+                )
+              : TextStyle(
+                  color: Color(0xFF888888),
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                ),
+        ),
+        this.listPageIndexBarTheme = TextTheme(
+          // long press background color
+          headline6: TextStyle(
+            color: listPageAppBarTheme.color ?? Colors.blue,
           ),
-          button: TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          subtitle2: TextStyle(
-            color: Color(0xFF888888),
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-          caption: TextStyle(
-            color: Colors.black54,
-            fontSize: 12,
-            fontWeight: FontWeight.normal,
-          ),
+
+          // button style
+          button: listPageIndexBarTheme?.button != null
+              ? listPageIndexBarTheme.button.copyWith(
+                  fontSize: listPageIndexBarTheme.button.fontSize ?? 12,
+                  color: listPageIndexBarTheme.button.color ?? Colors.black87,
+                  fontWeight: listPageIndexBarTheme.button.fontWeight ?? FontWeight.normal,
+                )
+              : TextStyle(
+                  fontSize: 12,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.normal,
+                ),
         ),
         super(key: key);
 
@@ -325,6 +368,7 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
               bodyBackgroundColor: widget.listBodyBackground,
               appBarTheme: widget.listPageAppBarTheme,
               textTheme: widget.listPageTextTheme,
+              indexBarTheme: widget.listPageIndexBarTheme,
             ))).then(
       (e) => _updateSelectedItem(e),
     );

@@ -35,7 +35,8 @@ class CountryIndexBar extends StatefulWidget {
   /// whether or not index bar should be disabled
   final bool indexBarDisabled;
 
-  final TextTheme textTheme;
+  /// text theme
+  final TextTheme indexBarTheme;
 
   CountryIndexBar(
     this.indexScrollController,
@@ -44,7 +45,7 @@ class CountryIndexBar extends StatefulWidget {
     this.alphaList,
     this.filteredIndexedElementsMap, {
     this.indexBarDisabled,
-    this.textTheme,
+    this.indexBarTheme,
   });
 
   @override
@@ -52,11 +53,12 @@ class CountryIndexBar extends StatefulWidget {
 }
 
 class _CountryIndexBarState extends State<CountryIndexBar> {
-  List<Widget> alphaItems;
-
   List<String> alphas;
 
   _CountryIndexBarState(this.alphas);
+
+  int selectedIndex = -1;
+  int longPressedIndex = -1;
 
   @override
   void initState() {
@@ -67,34 +69,83 @@ class _CountryIndexBarState extends State<CountryIndexBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.centerLeft,
       child: SizedBox(
-        width: 30.0,
-        height: 460,
+        width: 18.0,
+        height: 560.0,
         child: ListView.builder(
           clipBehavior: Clip.hardEdge,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: alphaItems.length,
+          itemCount: alphas.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              child: Container(
-                height: 16,
-                child: alphaItems[index],
-              ),
-              onTap: () {
-                if (!widget.indexBarDisabled) {
-                  double offset = 30.0 * index;
-                  for (int i = 0; i < index; i++) {
-                    offset += widget.filteredIndexedElementsMap.entries
-                            .firstWhere((e) => e.key.toUpperCase() == alphas[i].toUpperCase())
-                            .value
-                            .length *
-                        46.0;
-                  }
-
-                  widget.indexScrollController.jumpTo(offset);
-                }
+              onLongPress: () {
+                setState(() {
+                  this.selectedIndex = index;
+                  this.longPressedIndex = index;
+                });
               },
+              onLongPressEnd: (e) {
+                setState(() {
+                  this.longPressedIndex = -1;
+                });
+              },
+              child: Container(
+                height: 20,
+                decoration: longPressedIndex == index
+                    ? BoxDecoration(
+                        color: widget.indexBarTheme.headline6.color,
+                        borderRadius: BorderRadius.circular(60.0),
+                        border: Border(),
+                      )
+                    : null,
+                child: SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: Center(
+                    child: InkWell(
+                      focusColor: selectedIndex != index ? Colors.transparent : widget.indexBarTheme.headline6.color,
+                      splashColor: Colors.transparent,
+                      borderRadius: BorderRadius.circular(60.0),
+                      onTap: () {
+                        setState(() {
+                          this.selectedIndex = index;
+                        });
+
+                        if (!widget.indexBarDisabled) {
+                          double offset = 30.0 * index;
+                          for (int i = 0; i < index; i++) {
+                            offset += widget.filteredIndexedElementsMap.entries
+                                    .lastWhere((e) => e.key.toUpperCase() == alphas[i].toUpperCase())
+                                    .value
+                                    .length *
+                                44.0;
+                          }
+
+                          widget.indexScrollController.jumpTo(offset);
+                        }
+                      },
+                      child: alphas[index] == 'favorite'
+                          ? Icon(Icons.star_outline,
+                              color: selectedIndex != index
+                                  ? widget.indexBarTheme.button.color
+                                  : (longPressedIndex == index ? Colors.white : widget.indexBarTheme.headline6.color),
+                              size: widget.indexBarTheme.button.fontSize)
+                          : Text(
+                              alphas[index],
+                              style: TextStyle(
+                                  color: selectedIndex != index
+                                      ? widget.indexBarTheme.button.color
+                                      : (longPressedIndex == index
+                                          ? Colors.white
+                                          : widget.indexBarTheme.headline6.color),
+                                  fontSize: widget.indexBarTheme.button.fontSize,
+                                  fontWeight: selectedIndex != index ? FontWeight.normal : FontWeight.bold),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
             );
           },
         ),
@@ -102,48 +153,7 @@ class _CountryIndexBarState extends State<CountryIndexBar> {
     );
   }
 
-  @override
-  void didUpdateWidget(CountryIndexBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.filteredElements.length != widget.filteredElements.length ||
-        oldWidget.indexBarDisabled != widget.indexBarDisabled) {
-      _updateAlphaItems();
-    }
-  }
-
-  /// 更新索引列表组件
-  void _updateAlphaItems() {
-    List<Widget> alphaItems = [];
-    alphas.forEach((alpha) {
-      if (alpha == 'favorite') {
-        alphaItems.add(Center(
-          child: Icon(
-            Icons.star_outline,
-            color: widget.textTheme.caption.color ?? Colors.black87,
-            size: widget.textTheme.caption.fontSize ?? 12,
-          ),
-        ));
-      } else {
-        alphaItems.add(Center(
-          child: Text(
-            alpha,
-            style: TextStyle(
-              color: widget.textTheme.caption.color ?? Colors.black87,
-              fontSize: widget.textTheme.caption.fontSize ?? 12,
-            ),
-          ),
-        ));
-      }
-    });
-    setState(() {
-      this.alphaItems = alphaItems;
-    });
-  }
-
   void _updateAlphaList() {
     alphas.insert(0, 'favorite');
-    setState(() {
-      _updateAlphaItems();
-    });
   }
 }

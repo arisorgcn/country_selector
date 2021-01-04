@@ -71,12 +71,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     button: TextStyle(
                       color: Colors.white,
                     ))),
-            // listPageTextTheme: TextTheme(
-            //
-            // ),
+            listPageTextTheme: TextTheme(),
+            listPageIndexBarTheme: TextTheme(),
             onSelected: (params) {
               print(params.toString());
+              // if you want to assign it to other variable, wrap it in below code
+              // WidgetsBinding.instance.addPostFrameCallback((_) {
+              //   setState(() {
+              //     this.variable = params;
+              //   });
+              // });
             },
+            // use country short code or dial code
             favorite: ['86', 'HK', 'MO', 'TW'],
           ),
         ));
