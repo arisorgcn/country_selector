@@ -117,7 +117,7 @@ class _CountryListState extends State<CountryList> {
               // Country Name
               ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: 280,
+                  maxWidth: 250,
                 ),
                 child: Text(
                   currentItem.name,

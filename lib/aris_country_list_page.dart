@@ -27,6 +27,9 @@ import 'aris_country_code_item.dart';
 /// @author Aris Hu created at 2020-12-12
 ///
 class ArisCountryListPage extends StatefulWidget {
+  /// height of app bar
+  final double appBarHeight;
+
   /// use center title
   final bool useCenterTitle;
 
@@ -66,13 +69,13 @@ class ArisCountryListPage extends StatefulWidget {
   /// text theme of index bar
   final TextTheme indexBarTheme;
 
-  ArisCountryListPage(
-    this.navTitle,
-    this.cancelButtonText,
-    this.initialSelectedItem,
-    this.elements,
-    this.favoriteElements, {
+  ArisCountryListPage(this.navTitle,
+      this.cancelButtonText,
+      this.initialSelectedItem,
+      this.elements,
+      this.favoriteElements, {
     Key key,
+    this.appBarHeight = 44.0,
     this.useCenterTitle = true,
     this.bodyBackgroundColor,
     this.searchStyle,
@@ -115,6 +118,8 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
 
   bool disableIndexBar = false;
 
+  bool showToTop = false;
+
   @override
   void initState() {
     super.initState();
@@ -124,7 +129,22 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
 
     handledElements = _initItemsList();
     handledFavoriteElements = _initFavoriteItemsList();
+
+    indexScrollerController.addListener(_showToTopButton);
+
     _filterElements('');
+  }
+
+  void _showToTopButton() {
+    if (indexScrollerController.offset > 0) {
+      setState(() {
+        this.showToTop = true;
+      });
+    } else {
+      setState(() {
+        this.showToTop = false;
+      });
+    }
   }
 
   @override
@@ -152,6 +172,26 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       appBar: _buildAppBar,
       body: _buildBody,
       backgroundColor: widget.bodyBackgroundColor,
+      floatingActionButton: showToTop
+          ? Padding(
+              padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
+              child: FloatingActionButton(
+                mini: true,
+                tooltip: 'To Top',
+                onPressed: () {
+                  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                    indexScrollerController.animateTo(0.0,
+                        duration: Duration(milliseconds: 10), curve: ElasticInOutCurve());
+                  });
+                },
+                child: Icon(
+                  Icons.upgrade_rounded,
+                  size: 28.0,
+                  color: Theme.of(context).appBarTheme.color,
+                ),
+              ),
+            )
+          : SizedBox.shrink(),
     );
   }
 
@@ -180,21 +220,21 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   Widget get _buildStack {
     return Stack(
       alignment: Alignment.centerRight,
+      fit: StackFit.loose,
+      overflow: Overflow.visible,
       children: [
         CountryList(filteredElements, _selectItem, indexScrollerController, textTheme: widget.textTheme),
         Positioned(
-          top: (MediaQuery.of(context).size.height - 660) / 2,
-          right: 0,
-          child: Center(
-            child: CountryIndexBar(
-              indexScrollerController,
-              filteredElements,
-              countryCode,
-              alphaList,
-              filteredIndexedElementsMap,
-              indexBarDisabled: disableIndexBar,
-              indexBarTheme: widget.indexBarTheme,
-            ),
+          top: 0.0,
+          right: 0.0,
+          child: CountryIndexBar(
+            indexScrollerController,
+            filteredElements,
+            countryCode,
+            alphaList,
+            filteredIndexedElementsMap,
+            indexBarDisabled: disableIndexBar,
+            indexBarTheme: widget.indexBarTheme,
           ),
         ),
       ],
@@ -202,53 +242,55 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   }
 
   Widget get _buildAppBar {
-    return AppBar(
-      leading: _buildLeading,
-      automaticallyImplyLeading: false,
-      title: _buildNavTitle,
-      titleSpacing: 0.0,
-      actions: [
-        showSearch == false
-            ? SizedBox(
-                width: 60,
-                child: FlatButton(
-                  onPressed: () {
-                    setState(() {
-                      showSearch = true;
-                      disableIndexBar = true;
-                      indexScrollerController.jumpTo(0.0);
-                    });
-                  },
-                  child: Icon(
-                    Icons.search_outlined,
-                    size: widget.appBarTheme.iconTheme.size,
-                    color: widget.appBarTheme.textTheme.button.color,
+    return PreferredSize(
+      preferredSize: Size.fromHeight(widget.appBarHeight),
+      child: AppBar(
+        leading: _buildLeading,
+        automaticallyImplyLeading: false,
+        title: _buildNavTitle,
+        centerTitle: widget.useCenterTitle,
+        titleSpacing: 0.0,
+        actions: [
+          showSearch == false
+              ? SizedBox(
+                  width: 60,
+                  child: FlatButton(
+                    splashColor: Colors.transparent,
+                    onPressed: () {
+                      setState(() {
+                        showSearch = true;
+                        disableIndexBar = true;
+                        indexScrollerController.jumpTo(0.0);
+                      });
+                    },
+                    child: Icon(
+                      Icons.search_outlined,
+                      size: widget.appBarTheme.iconTheme.size,
+                      color: widget.appBarTheme.textTheme.button.color,
+                    ),
                   ),
-                ),
-              )
-            : SizedBox.shrink(),
-      ],
-      textTheme: widget.appBarTheme.textTheme,
-      iconTheme: widget.appBarTheme.iconTheme,
-      actionsIconTheme: widget.appBarTheme.actionsIconTheme,
-      backgroundColor: widget.appBarTheme.color,
+                )
+              : SizedBox.shrink(),
+        ],
+        textTheme: widget.appBarTheme.textTheme,
+        iconTheme: widget.appBarTheme.iconTheme,
+        actionsIconTheme: widget.appBarTheme.actionsIconTheme,
+        backgroundColor: widget.appBarTheme.color,
+      ),
     );
   }
 
   /// 构建标题栏组件
   Widget get _buildNavTitle {
-    return Padding(
-      padding: EdgeInsets.all(5.0),
-      child: showSearch ? _showSearch() : _showTitle(),
-    );
+    return showSearch ? _showSearch() : _showTitle();
   }
 
   /// 构建标题栏左边按钮部分
   Widget get _buildLeading {
     return !showSearch
         ? SizedBox(
-            width: 40,
             child: FlatButton(
+              splashColor: Colors.transparent,
               child: Icon(
                 Icons.arrow_back_ios_outlined,
                 size: 22.0,
@@ -261,22 +303,18 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
   }
 
   Widget _showTitle() {
-    return Container(
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100),
-      alignment: widget.useCenterTitle ? Alignment.center : Alignment.centerLeft,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Text(
-            widget.navTitle,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            style: widget.appBarTheme.textTheme.headline5,
-          ),
-        ],
-      ),
+    return Text(
+      widget.navTitle,
+      // textAlign: widget.useCenterTitle ? TextAlign.center : TextAlign.left,
+      softWrap: true,
+      overflow: TextOverflow.ellipsis,
+      style: widget.appBarTheme.textTheme.headline5,
     );
+    // return Container(
+    //   padding: EdgeInsets.zero,
+    //   constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 100),
+    //   child: ,
+    // );
   }
 
   Widget _showSearch() {
@@ -293,8 +331,8 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
             children: [
               Expanded(child: _buildConstrainedTextField),
               SizedBox(
-                width: 16.0,
-                child: Divider(),
+                width: 8.0,
+                child: Divider(color: Colors.transparent),
               ),
               _buildSearchCancelButton,
             ],
@@ -304,27 +342,33 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     );
   }
 
-  SizedBox get _buildSearchCancelButton {
-    return SizedBox(
-      width: 60,
-      child: FlatButton(
-        padding: EdgeInsets.zero,
-        onPressed: () {
-          setState(() {
-            showSearch = false;
-            disableIndexBar = false;
-          });
-        },
-        child: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty)
-            ? Icon(
-                Icons.rotate_left_outlined,
-                size: widget.appBarTheme.textTheme.button.fontSize,
-                color: widget.appBarTheme.textTheme.button.color,
-              )
-            : Text(
-                widget.cancelButtonText,
-                style: widget.appBarTheme.textTheme.headline5,
-              ),
+  Widget get _buildSearchCancelButton {
+    return Semantics(
+      button: true,
+      onLongPressHint: 'Cancel',
+      onTapHint: 'Cancel',
+      child: SizedBox(
+        width: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty) ? 32.0 : 60.0,
+        child: FlatButton(
+          splashColor: Colors.transparent,
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            setState(() {
+              showSearch = false;
+              disableIndexBar = false;
+            });
+          },
+          child: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty)
+              ? Icon(
+                  Icons.rotate_left_outlined,
+                  // size: widget.appBarTheme.textTheme.button.fontSize,
+                  color: widget.appBarTheme.textTheme.button.color,
+                )
+              : Text(
+                  widget.cancelButtonText,
+                  style: widget.appBarTheme.textTheme.headline5,
+                ),
+        ),
       ),
     );
   }
@@ -333,22 +377,22 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
     return ConstrainedBox(
       constraints: BoxConstraints(
         maxWidth: MediaQuery.of(context).size.width - 100,
-        maxHeight: 38,
+        maxHeight: widget.appBarHeight - 14.0,
       ),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 4.0),
         decoration: widget.appBarTheme != null && widget.appBarTheme.color == Colors.white
             ? BoxDecoration(
-                color: Color(0xFFF2F2F2),
+          color: Color(0xFFF2F2F2),
                 shape: BoxShape.rectangle,
                 border: Border.all(style: BorderStyle.none),
-                borderRadius: BorderRadius.circular(6.0),
+                borderRadius: BorderRadius.circular(4.0),
               )
             : BoxDecoration(
-                color: Color(0xFFFFFFFF),
+          color: Color(0xFFFFFFFF),
                 shape: BoxShape.rectangle,
                 border: Border.all(style: BorderStyle.none),
-                borderRadius: BorderRadius.circular(6.0),
+                borderRadius: BorderRadius.circular(4.0),
               ),
         child: TextField(
           focusNode: _textFieldFocusNode,
@@ -362,8 +406,17 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
           decoration: InputDecoration(
             hintText: widget.searchHint,
             hintStyle: widget.hintStyle ?? widget.appBarTheme.textTheme.bodyText2,
+            prefixIconConstraints: BoxConstraints(
+              minWidth: 32,
+              maxWidth: 32,
+            ),
             prefixIcon: Icon(
               Icons.search,
+              size: widget.appBarTheme.iconTheme.size,
+            ),
+            suffixIconConstraints: BoxConstraints(
+              minWidth: 32,
+              maxWidth: 32,
             ),
             suffixIcon: _textEditingController.text.isNotEmpty
                 ? InkWell(
@@ -371,7 +424,10 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
                       _textEditingController.clear();
                       _filterElements('');
                     },
-                    child: Icon(Icons.cancel_sharp),
+                    child: Icon(
+                      Icons.cancel_sharp,
+                      size: widget.appBarTheme.iconTheme.size,
+                    ),
                   )
                 : null,
             contentPadding: const EdgeInsets.only(right: 12.0),

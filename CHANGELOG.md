@@ -1,3 +1,7 @@
+## 1.0.2+3(2020-01-09)
+
+* make some optimizations
+
 ## 1.0.2+2(2020-01-04)
 
 * make some optimizations

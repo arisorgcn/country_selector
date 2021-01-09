@@ -72,7 +72,7 @@ class _CountryIndexBarState extends State<CountryIndexBar> {
       alignment: Alignment.centerLeft,
       child: SizedBox(
         width: 18.0,
-        height: 560.0,
+        height: MediaQuery.of(context).size.height - (MediaQuery.of(context).padding.top * 2),
         child: ListView.builder(
           clipBehavior: Clip.hardEdge,
           physics: NeverScrollableScrollPhysics(),
@@ -91,7 +91,7 @@ class _CountryIndexBarState extends State<CountryIndexBar> {
                 });
               },
               child: Container(
-                height: 20,
+                height: 18,
                 decoration: longPressedIndex == index
                     ? BoxDecoration(
                         color: widget.indexBarTheme.headline6.color,

@@ -28,6 +28,14 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
+      builder: (BuildContext context, Widget child) {
+        /// make font size not affected by system font setting
+        /// https://www.kikt.top/posts/flutter/layout/dynamic-text/
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child,
+        );
+      },
       home: MyHomePage(title: 'Country Selector Demo'),
     );
   }
@@ -53,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: ArisCountrySelector(
             listPageTitle: 'Select Country and Region',
+            titleCentered: true,
             listPageCancelButtonText: 'Cancel',
             listPageSearchHint: 'Search',
             initialSelection: 'US',
