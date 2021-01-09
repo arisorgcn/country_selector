@@ -1,5 +1,7 @@
 # country_selector
 
+Language: [English](README.md) | 中文简体
+
 flutter组件-城市选择器
 
 ## 使用方法

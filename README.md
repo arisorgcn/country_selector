@@ -1,5 +1,7 @@
 # country_selector
 
+Language: English | [中文简体](README_CN.md)
+
 A flutter package for country and code selection
 
 You can use this widget to get region code and this widget allows you to filter
