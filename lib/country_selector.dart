@@ -32,6 +32,12 @@ import 'constants/country_codes.dart';
 /// @author Aris Hu created at 2020-12-14
 ///
 class ArisCountrySelector extends StatefulWidget {
+  /// color of floating action button
+  final TextStyle floatingButtonStyle;
+
+  /// whether or not show to top button
+  final bool enableBackToTop;
+
   /// the title of the list page
   final String listPageTitle;
 
@@ -102,12 +108,17 @@ class ArisCountrySelector extends StatefulWidget {
     this.locale,
     this.showCountryAndCode = true,
     this.showCountryOnly = false,
+    this.enableBackToTop = true,
+    this.floatingButtonStyle = const TextStyle(
+      color: Colors.white,
+      fontSize: 28.0,
+    ),
     @required final AppBarTheme listPageAppBarTheme,
     @required final TextTheme listPageTextTheme,
     @required final TextTheme listPageIndexBarTheme,
     this.listBodyBackground = Colors.white,
   })  : this.listPageAppBarTheme = AppBarTheme(
-          brightness: listPageAppBarTheme.brightness ?? Brightness.dark,
+    brightness: listPageAppBarTheme.brightness ?? Brightness.dark,
           color: listPageAppBarTheme.color ?? Colors.blue,
           iconTheme: listPageAppBarTheme.iconTheme != null
               ? listPageAppBarTheme.iconTheme.copyWith(
@@ -115,7 +126,11 @@ class ArisCountrySelector extends StatefulWidget {
                   size: listPageAppBarTheme.iconTheme.size ?? 20,
                 )
               : IconThemeData(color: Colors.black87, size: 20),
-          actionsIconTheme: listPageAppBarTheme.actionsIconTheme ?? IconThemeData(color: Colors.black87, size: 20),
+          actionsIconTheme: listPageAppBarTheme.actionsIconTheme != null
+              ? listPageAppBarTheme.actionsIconTheme.copyWith(
+                  color: listPageAppBarTheme.actionsIconTheme.color ?? Colors.white,
+                  size: listPageAppBarTheme.actionsIconTheme.size ?? 16)
+              : IconThemeData(color: Colors.white, size: 16),
           textTheme: listPageAppBarTheme.textTheme != null
               ? listPageAppBarTheme.textTheme.copyWith(
                   headline5: listPageAppBarTheme.textTheme.headline5 != null
@@ -127,7 +142,7 @@ class ArisCountrySelector extends StatefulWidget {
                       : TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                   headline6: listPageAppBarTheme.textTheme.headline6 != null
                       ? listPageAppBarTheme.textTheme.headline6.copyWith(
-                          color: listPageAppBarTheme.textTheme.headline6.color ?? Colors.black87,
+        color: listPageAppBarTheme.textTheme.headline6.color ?? Colors.black87,
                           fontSize: listPageAppBarTheme.textTheme.headline6.fontSize ?? 14,
                           fontWeight: listPageAppBarTheme.textTheme.headline6.fontWeight ?? FontWeight.bold,
                         )
@@ -135,54 +150,54 @@ class ArisCountrySelector extends StatefulWidget {
                   button: listPageAppBarTheme.textTheme.button != null
                       ? listPageAppBarTheme.textTheme.button.copyWith(
                           color: listPageAppBarTheme.textTheme.button.color ?? Colors.black87,
-                          fontSize: listPageAppBarTheme.textTheme.button.fontSize ?? 14,
+                          fontSize: listPageAppBarTheme.textTheme.button.fontSize ?? 16,
                           fontWeight: listPageAppBarTheme.textTheme.button.fontWeight ?? FontWeight.bold,
                         )
-                      : TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+                      : TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                 )
-              : TextTheme(
-                  headline5: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+        : TextTheme(
+      headline5: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                   headline6: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
-                  button: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),
+                  button: TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-        ),
+  ),
         this.listPageTextTheme = TextTheme(
           // country text style
           subtitle1: listPageTextTheme.subtitle1 != null
               ? listPageTextTheme.subtitle1.copyWith(
-                  color: listPageTextTheme.subtitle1.color ?? Colors.black87,
-                  fontSize: listPageTextTheme.subtitle1.fontSize ?? 16,
-                  fontWeight: listPageTextTheme.subtitle1.fontWeight ?? FontWeight.normal,
-                )
+            color: listPageTextTheme.subtitle1.color ?? Colors.black87,
+            fontSize: listPageTextTheme.subtitle1.fontSize ?? 16,
+            fontWeight: listPageTextTheme.subtitle1.fontWeight ?? FontWeight.normal,
+          )
               : TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
           // index tag style
           button: listPageTextTheme.button != null
               ? listPageTextTheme.button.copyWith(
-                  color: listPageTextTheme.button.color ?? Colors.black87,
-                  fontSize: listPageTextTheme.button.fontSize ?? 16,
-                  fontWeight: listPageTextTheme.button.fontWeight ?? FontWeight.bold,
-                )
+            color: listPageTextTheme.button.color ?? Colors.black87,
+            fontSize: listPageTextTheme.button.fontSize ?? 16,
+            fontWeight: listPageTextTheme.button.fontWeight ?? FontWeight.bold,
+          )
               : TextStyle(
-                  color: Colors.black87,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
           // right dial code style
           subtitle2: listPageIndexBarTheme.subtitle2 != null
               ? listPageIndexBarTheme.subtitle2.copyWith(
-                  color: listPageTextTheme.subtitle2.color ?? Color(0xFF888888),
-                  fontSize: listPageTextTheme.subtitle2.fontSize ?? 12,
-                  fontWeight: listPageTextTheme.subtitle2.fontWeight ?? FontWeight.normal,
-                )
+            color: listPageTextTheme.subtitle2.color ?? Color(0xFF888888),
+            fontSize: listPageTextTheme.subtitle2.fontSize ?? 12,
+            fontWeight: listPageTextTheme.subtitle2.fontWeight ?? FontWeight.normal,
+          )
               : TextStyle(
-                  color: Color(0xFF888888),
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                ),
+            color: Color(0xFF888888),
+            fontSize: 12,
+            fontWeight: FontWeight.normal,
+          ),
         ),
         this.listPageIndexBarTheme = TextTheme(
           // long press background color
@@ -193,15 +208,15 @@ class ArisCountrySelector extends StatefulWidget {
           // button style
           button: listPageIndexBarTheme?.button != null
               ? listPageIndexBarTheme.button.copyWith(
-                  fontSize: listPageIndexBarTheme.button.fontSize ?? 12,
-                  color: listPageIndexBarTheme.button.color ?? Colors.black87,
-                  fontWeight: listPageIndexBarTheme.button.fontWeight ?? FontWeight.normal,
-                )
+            fontSize: listPageIndexBarTheme.button.fontSize ?? 12,
+            color: listPageIndexBarTheme.button.color ?? Colors.black87,
+            fontWeight: listPageIndexBarTheme.button.fontWeight ?? FontWeight.normal,
+          )
               : TextStyle(
-                  fontSize: 12,
-                  color: Colors.black54,
-                  fontWeight: FontWeight.normal,
-                ),
+            fontSize: 12,
+            color: Colors.black54,
+            fontWeight: FontWeight.normal,
+          ),
         ),
         super(key: key);
 
@@ -212,7 +227,7 @@ class ArisCountrySelector extends StatefulWidget {
 
     /// 将json列表转成DemaCountryCodeItem列表
     List<ArisCountryCodeItem> elements =
-        jsonList.map((countryJson) => ArisCountryCodeItem.fromJson(countryJson)).toList();
+    jsonList.map((countryJson) => ArisCountryCodeItem.fromJson(countryJson)).toList();
 
     return _ArisCountrySelectorState(elements);
   }
@@ -370,6 +385,8 @@ class _ArisCountrySelectorState extends State<ArisCountrySelector> {
               appBarTheme: widget.listPageAppBarTheme,
               textTheme: widget.listPageTextTheme,
               indexBarTheme: widget.listPageIndexBarTheme,
+              enableBackToTop: widget.enableBackToTop,
+              floatingButtonStyle: widget.floatingButtonStyle,
             ))).then(
       (e) => _updateSelectedItem(e),
     );

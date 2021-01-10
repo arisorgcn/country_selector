@@ -1,3 +1,7 @@
+## 1.0.2+4(2020-01-10)
+
+* add `floatingButtonStyle` configuration
+
 ## 1.0.2+3(2020-01-09)
 
 * make some optimizations

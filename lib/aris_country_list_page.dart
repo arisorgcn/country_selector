@@ -69,11 +69,16 @@ class ArisCountryListPage extends StatefulWidget {
   /// text theme of index bar
   final TextTheme indexBarTheme;
 
-  ArisCountryListPage(this.navTitle,
-      this.cancelButtonText,
-      this.initialSelectedItem,
-      this.elements,
-      this.favoriteElements, {
+  final bool enableBackToTop;
+
+  final TextStyle floatingButtonStyle;
+
+  ArisCountryListPage(
+    this.navTitle,
+    this.cancelButtonText,
+    this.initialSelectedItem,
+    this.elements,
+    this.favoriteElements, {
     Key key,
     this.appBarHeight = 44.0,
     this.useCenterTitle = true,
@@ -84,6 +89,11 @@ class ArisCountryListPage extends StatefulWidget {
     this.appBarTheme,
     this.textTheme,
     this.indexBarTheme,
+    this.enableBackToTop = true,
+    this.floatingButtonStyle = const TextStyle(
+      color: Colors.white,
+      fontSize: 28.0,
+    ),
   }) : super(key: key);
 
   @override
@@ -172,7 +182,7 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
       appBar: _buildAppBar,
       body: _buildBody,
       backgroundColor: widget.bodyBackgroundColor,
-      floatingActionButton: showToTop
+      floatingActionButton: widget.enableBackToTop && showToTop
           ? Padding(
               padding: EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: FloatingActionButton(
@@ -186,8 +196,8 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
                 },
                 child: Icon(
                   Icons.upgrade_rounded,
-                  size: 28.0,
-                  color: Theme.of(context).appBarTheme.color,
+                  size: widget.floatingButtonStyle.fontSize,
+                  color: widget.floatingButtonStyle.color,
                 ),
               ),
             )
@@ -360,9 +370,9 @@ class _ArisCountryListPageState extends State<ArisCountryListPage> {
           },
           child: (widget.cancelButtonText == null || widget.cancelButtonText.isEmpty)
               ? Icon(
-                  Icons.rotate_left_outlined,
-                  // size: widget.appBarTheme.textTheme.button.fontSize,
-                  color: widget.appBarTheme.textTheme.button.color,
+            Icons.rotate_left_outlined,
+                  size: widget.appBarTheme.actionsIconTheme.size,
+                  color: widget.appBarTheme.actionsIconTheme.color,
                 )
               : Text(
                   widget.cancelButtonText,

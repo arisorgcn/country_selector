@@ -62,6 +62,11 @@ class _MyHomePageState extends State<MyHomePage> {
           child: ArisCountrySelector(
             listPageTitle: 'Select Country and Region',
             titleCentered: true,
+            // enableBackToTop: false,
+            floatingButtonStyle: TextStyle(
+              fontSize: 32.0,
+              // color: Colors.yellow,
+            ),
             listPageCancelButtonText: 'Cancel',
             listPageSearchHint: 'Search',
             initialSelection: 'US',
